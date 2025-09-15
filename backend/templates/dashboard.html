@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Your Mood Logs</h2>
+
+    <form method="POST" action="/log_mood">
+      <textarea name="journal" placeholder="How are you feeling today?" required></textarea>
+      <button type="submit">Log Mood</button>
+    </form>
+
+    <h3>Recent Moods</h3>
+    <ul>
+    {% for mood in moods %}
+      <li>{{ mood.date.strftime('%Y-%m-%d %H:%M') }} - <strong>{{ mood.mood }}</strong>: {{ mood.journal }}</li>
+    {% endfor %}
+    </ul>
+
+    <!-- Mood Trend Chart -->
+    <div class="chart-container">
+      <canvas id="moodChart" data-moods='[
+        {% for mood in moods %}
+          {"date": "{{ mood.date.strftime('%Y-%m-%d') }}", "sentiment": {{ mood.sentiment }} }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]'></canvas>
+    </div>
+
+    <a href="/logout">Logout</a>
+  </div>
+
+  <script src="/static/js/charts.js"></script>
+</body>
+</html>
